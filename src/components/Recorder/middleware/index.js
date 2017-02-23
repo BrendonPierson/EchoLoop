@@ -1,5 +1,5 @@
 import RecorderManager from './recorder_manager'
-const trailingInterval = 15 * 1000
+const trailingInterval = 45 * 1000
 const recorderManager = new RecorderManager(trailingInterval)
 
 export const recorderMiddleware = store => next => action => {
