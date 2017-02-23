@@ -1,38 +1,22 @@
-/* @flow */
-import RecorderManager from './recorder_manager'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import App from './components/App'
+import injectTapEventPlugin from 'react-tap-event-plugin'
+import { Provider } from 'react-redux'
+import { store } from './store'
+require('./main.scss')
+injectTapEventPlugin()
 
-const
-  trailingInterval = 5 * 1000,
-  recorderManager = new RecorderManager(trailingInterval),
-  bgRecordBtnStart = document.getElementById('bgRecordBtnStart'),
-  bgRecordBtnStop = document.getElementById('bgRecordBtnStop'),
-  fgRecordBtnStart = document.getElementById('fgRecordBtnStart'),
-  saveBtn = document.getElementById('saveBtn')
+const Main = () => (
+  <Provider store={store}>
+    <MuiThemeProvider>
+      <App/>
+    </MuiThemeProvider>
+  </Provider>
+)
 
-bgRecordBtnStart.disabled = false
-bgRecordBtnStop.disabled = true
-fgRecordBtnStart.disabled = true
-saveBtn.disabled = true
-
-bgRecordBtnStart.onclick = function() {
-  recorderManager.startBackgroundRecording()
-  this.disabled = true
-  bgRecordBtnStop.disabled = false
-  fgRecordBtnStart.disabled = false
-}
-
-bgRecordBtnStop.onclick = function() {
-  recorderManager.stopBackgroundRecording()
-  this.disabled = true
-  fgRecordBtnStart.disabled = true
-  bgRecordBtnStart.disabled = false
-  saveBtn.disabled = false
-}
-
-fgRecordBtnStart.onclick = function() {
-  recorderManager.startForegroundRecording()
-  this.disabled = true
-  bgRecordBtnStop.disabled = false
-}
-
-saveBtn.onclick = () => recorderManager.download()
+ReactDOM.render(
+  <Main />,
+  document.getElementById('app')
+)

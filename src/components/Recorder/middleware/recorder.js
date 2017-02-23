@@ -6,7 +6,7 @@ export default class Recorder {
     this.chunks = []
     // $FlowFixMe: suppressing this error until we can refactor
     this.mediaRecorder = new MediaRecorder(stream)
-    this.mediaRecorder.ondataaggvailable = this.incomingData
+    this.mediaRecorder.ondataavailable = this.incomingData
   }
   get length()/*:number*/{ return this.chunks.length }
   get blob()/*:Blob*/{ return new Blob(this.chunks, audioConfig) }
@@ -14,6 +14,8 @@ export default class Recorder {
   get duration()/*:number*/{ return (new Date() - this.startTime) / 1000 }
 
   start = () => {
+    if(this.mediaRecorder.state === 'recording')
+      return
     this.mediaRecorder.start()
     this.startTime = new Date()
   }
@@ -24,6 +26,7 @@ export default class Recorder {
       this.mediaRecorder.stop()
   }
   incomingData = ({ data } /* :Object */) => this.chunks.push(data)
+
   onStop = () => console.log("Stopped.")
   /* flow-include chunks :Array<Blob>*/
   /* flow-include mediaRecorder :Object*/
@@ -32,5 +35,4 @@ export default class Recorder {
   /* flow-include stream :MediaStream*/
   /* flow-include stream :MediaStream*/
   /* flow-include intervalId :number*/
-
 }

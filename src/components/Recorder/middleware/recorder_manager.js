@@ -1,5 +1,6 @@
 /* @flow */
 import Recorder from './recorder'
+const status = document.getElementById('status')
 
 export default class RecorderManager {
   constructor(trailingInterval /* :number */) {
@@ -7,12 +8,14 @@ export default class RecorderManager {
     this.trailingInterval = trailingInterval
   }
   get duration() /* :number*/ {
+    if(!this.recorderA)
+      return 0
     if(!this.recorderB)
       return this.recorderA.duration
     return Math.max(this.recorderA.duration, this.recorderB.duration)
   }
 
-  startBackgroundRecording = () => {
+  startBackgroundRecording = () =>
     window.navigator.mediaDevices.getUserMedia({audio: true})
       .then(stream => {
         this.stream = stream
@@ -23,18 +26,17 @@ export default class RecorderManager {
         this._whosNext()
         this._startBackgroundInterval()
       })
-  }
 
   startForegroundRecording = () => {
+    console.log('record in foreground')
     clearInterval(this.intervalId)
-    console.log('this.recorderA, this.recorderB',
-    this.recorderA, this.recorderB)
     if(this.recorderB && this.recorderB.length > this.recorderA.length)
       return this.recorderA.stop()
     return this.recorderB ? this.recorderB.stop() : null
   }
 
-  stopBackgroundRecording = () => {
+  stopRecording = () => {
+    console.log('stop recording')
     this.recorderA.stop()
     if(this.recorderB)
       this.recorderB.stop()
@@ -43,6 +45,7 @@ export default class RecorderManager {
 
   download = () => {
     const blob =  this._getBlob()
+    console.log('blob.length()', blob)
     const url = URL.createObjectURL(blob)
     const a = document.createElement('a')
     document.body.appendChild(a)
@@ -55,6 +58,8 @@ export default class RecorderManager {
 
   _startBackgroundInterval = () => {
     this.intervalId = setInterval(() => {
+      console.log('Switching recorders')
+      console.log('this', this)
       // $FlowFixMe: suppressing this error until we can refactor
       this[this.nextUp] = new Recorder(this.stream)
       // $FlowFixMe: suppressing this error until we can refactor
@@ -72,6 +77,9 @@ export default class RecorderManager {
   _whosNext = () => {
     this.nextUp = this.nextUp === 'recorderA' ? 'recorderB' : 'recorderA'
   }
+
+  _setStatus = (text /* :string */) => status.innerText = text
+
   /*flow-include nextUp :string*/
   /*flow-include trailingInterval :number*/
   /*flow-include recorderA :Recorder*/
