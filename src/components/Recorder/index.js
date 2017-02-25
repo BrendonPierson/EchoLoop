@@ -17,6 +17,7 @@ class Recorder extends Component {
       stopRecording,
       saveRecording,
       duration,
+      audioUrl,
     }  = this.props
     return (
       <div>
@@ -40,6 +41,9 @@ class Recorder extends Component {
           disabled={duration === 0 || backgroundRecording}
           onTouchTap={saveRecording}
           label="Save" secondary={true} style={style} />
+        <div>
+          <audio controls src={audioUrl}/>
+        </div>
       </div>
     )
   }
@@ -49,6 +53,7 @@ const mapStateToProps = (state, ownProps) => ({
   backgroundRecording: state.getIn(['recorder', 'backgroundRecording'], false),
   foregroundRecording: state.getIn(['recorder', 'foregroundRecording'], false),
   duration: state.getIn(['recorder', 'duration'], 0),
+  audioUrl: state.getIn(['recorder', 'audioUrl']),
 })
 const mapDispatchToProps = (dispatch, ownProps) => ({
   startBackgroundRecording: () => dispatch(C.startBackgroundRecording()),

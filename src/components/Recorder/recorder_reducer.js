@@ -6,7 +6,8 @@ export default function(state = new Map(), action) {
     [A.START_BACKGROUND_RECORDING]: () => state.set('backgroundRecording', true),
     [A.STOP_RECORDING]: () => state.set('backgroundRecording', false)
                                    .set('foregroundRecording', false)
-                                   .set('duration', action.duration),
+                                   .set('duration', action.duration)
+                                   .set('audioUrl', action.audioUrl),
     [A.START_FOREGROUND_RECORDING]: () => state.set('foregroundRecording', true)
                                                .set('duration', action.duration),
     [A.SAVE_RECORDING]: () => new Map(),

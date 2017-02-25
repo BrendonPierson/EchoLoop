@@ -4,8 +4,9 @@ const recorderManager = new RecorderManager(trailingInterval)
 
 export const recorderMiddleware = store => next => action => {
   if(action.subType === 'recorder') {
-    recorderManager[action.recorderAction]()
+    const result = recorderManager[action.recorderAction]()
     action.duration = recorderManager.duration
+    action.audioUrl = result && result.type === 'audioUrl' ? result.body : null
   }
   return next(action)
 }

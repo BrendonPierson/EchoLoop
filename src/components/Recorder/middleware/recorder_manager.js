@@ -41,6 +41,7 @@ export default class RecorderManager {
     if(this.recorderB)
       this.recorderB.stop()
     clearInterval(this.intervalId)
+    return this.getAudioUrl()
   }
 
   download = () => {
@@ -55,6 +56,11 @@ export default class RecorderManager {
     a.click()
     window.URL.revokeObjectURL(url)
   }
+
+  getAudioUrl = () => ({
+    type: 'audioUrl',
+    body: URL.createObjectURL(this._getBlob()),
+  })
 
   _startBackgroundInterval = () => {
     this.intervalId = setInterval(() => {
