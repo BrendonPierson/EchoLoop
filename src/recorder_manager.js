@@ -1,6 +1,5 @@
 /* @flow */
 import Recorder from './recorder'
-const status = document.getElementById('status')
 
 export default class RecorderManager {
   constructor(trailingInterval /* :number */) {
@@ -18,6 +17,7 @@ export default class RecorderManager {
   startBackgroundRecording = () =>
     window.navigator.mediaDevices.getUserMedia({audio: true})
       .then(stream => {
+        console.log('Starting background recording')
         this.stream = stream
         // $FlowFixMe: suppressing this error until we can refactor
         this[this.nextUp] = new Recorder(this.stream)
@@ -29,6 +29,7 @@ export default class RecorderManager {
 
   startForegroundRecording = () => {
     console.log('record in foreground')
+    this.foregroundRecording = true
     clearInterval(this.intervalId)
     if(this.recorderB && this.recorderB.length > this.recorderA.length)
       return this.recorderA.stop()
@@ -55,6 +56,11 @@ export default class RecorderManager {
     a.download = `${Date.now()}_chunk.webm`
     a.click()
     window.URL.revokeObjectURL(url)
+
+    if(this.foregroundRecording) {
+      this.stopRecording()
+      this.startBackgroundRecording()
+    }
   }
 
   getAudioUrl = () => ({
@@ -72,7 +78,7 @@ export default class RecorderManager {
       this[this.nextUp].start()
       this._whosNext()
     }, this.trailingInterval)
-  }
+    }
 
   _getBlob() {
     if(!this.recorderB || this.recorderA.length > this.recorderB.length)
